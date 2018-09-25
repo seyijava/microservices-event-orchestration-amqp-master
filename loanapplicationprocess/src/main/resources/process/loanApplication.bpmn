@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1m5m4xi" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+  <bpmn:process id="submitLoanApp" name="Notification" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_1gz3hsw</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1gz3hsw" sourceRef="StartEvent_1" targetRef="Task_1" />
+    <bpmn:serviceTask id="Task_1" name="Retrive Loan Application" camunda:delegateExpression="${retriveLoanService}">
+      <bpmn:incoming>SequenceFlow_1gz3hsw</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0aj8sd6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0aj8sd6" sourceRef="Task_1" targetRef="Task_2" />
+    <bpmn:serviceTask id="Task_2" name="Check Credit Rating from Credit Bureau Agency" camunda:delegateExpression="${creditBureauService}">
+      <bpmn:incoming>SequenceFlow_0aj8sd6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_14dhqt9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_14dhqt9" sourceRef="Task_2" targetRef="Task_3" />
+    <bpmn:serviceTask id="Task_3" name="Calculate Loan Fee" camunda:delegateExpression="${feeCalculationService}">
+      <bpmn:incoming>SequenceFlow_14dhqt9</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0bx6w71</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0bx6w71" sourceRef="Task_3" targetRef="Task_4" />
+    <bpmn:serviceTask id="Task_4" name="Process Loan Application" camunda:expression="${loanProcessService}">
+      <bpmn:incoming>SequenceFlow_0bx6w71</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_18qhyos</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_18qhyos" sourceRef="Task_4" targetRef="Task_5" />
+    <bpmn:serviceTask id="Task_5" name="Notify Customer" camunda:delegateExpression="${notificationService}">
+      <bpmn:incoming>SequenceFlow_18qhyos</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0l9mu3x</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="EndEvent_05yueiy">
+      <bpmn:incoming>SequenceFlow_0l9mu3x</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0l9mu3x" sourceRef="Task_5" targetRef="EndEvent_05yueiy" />
+    <bpmn:textAnnotation id="TextAnnotation_185x49w" />
+    <bpmn:textAnnotation id="TextAnnotation_0dc35dj">
+      <bpmn:text>Invoke LoanService  Redis</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1dwp6c0" sourceRef="Task_1" targetRef="TextAnnotation_0dc35dj" />
+    <bpmn:textAnnotation id="TextAnnotation_0ssu62v">
+      <bpmn:text>Invoke Credit Buruea Service 
+--AMQP RPC Adapter</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1p1v0kn" sourceRef="Task_2" targetRef="TextAnnotation_0ssu62v" />
+    <bpmn:textAnnotation id="TextAnnotation_1mraek7">
+      <bpmn:text>Invoke Calculation Service 
+--AMQP RPC Adapter</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1a5tlqw" sourceRef="Task_3" targetRef="TextAnnotation_1mraek7" />
+    <bpmn:textAnnotation id="TextAnnotation_081mm1g">
+      <bpmn:text>Invoke Loan Processing Service
+--AMQP RPC Adapter</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0i32dks" sourceRef="Task_4" targetRef="TextAnnotation_081mm1g" />
+    <bpmn:textAnnotation id="TextAnnotation_02vcmb9">
+      <bpmn:text>Invoke Notification Service 
+--AMQP RPC Adapter</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0smshju" sourceRef="Task_5" targetRef="TextAnnotation_02vcmb9" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="submitLoanApp">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="71" y="254" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1gz3hsw_di" bpmnElement="SequenceFlow_1gz3hsw">
+        <di:waypoint x="107" y="272" />
+        <di:waypoint x="228" y="272" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1bw0pvi_di" bpmnElement="Task_1">
+        <dc:Bounds x="228" y="232" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0aj8sd6_di" bpmnElement="SequenceFlow_0aj8sd6">
+        <di:waypoint x="328" y="272" />
+        <di:waypoint x="441" y="272" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_160qo8o_di" bpmnElement="Task_2">
+        <dc:Bounds x="441" y="232" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_14dhqt9_di" bpmnElement="SequenceFlow_14dhqt9">
+        <di:waypoint x="541" y="272" />
+        <di:waypoint x="669" y="272" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0cpaphk_di" bpmnElement="Task_3">
+        <dc:Bounds x="669" y="232" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0bx6w71_di" bpmnElement="SequenceFlow_0bx6w71">
+        <di:waypoint x="769" y="272" />
+        <di:waypoint x="891" y="274" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1abwn21_di" bpmnElement="Task_4">
+        <dc:Bounds x="891" y="234" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_18qhyos_di" bpmnElement="SequenceFlow_18qhyos">
+        <di:waypoint x="991" y="274" />
+        <di:waypoint x="1072" y="274" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1q4mqv3_di" bpmnElement="Task_5">
+        <dc:Bounds x="1072" y="234" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_185x49w_di" bpmnElement="TextAnnotation_185x49w">
+        <dc:Bounds x="1137" y="257" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_05yueiy_di" bpmnElement="EndEvent_05yueiy">
+        <dc:Bounds x="1229" y="256" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0l9mu3x_di" bpmnElement="SequenceFlow_0l9mu3x">
+        <di:waypoint x="1172" y="274" />
+        <di:waypoint x="1229" y="274" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0dc35dj_di" bpmnElement="TextAnnotation_0dc35dj">
+        <dc:Bounds x="172" y="92" width="134" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1dwp6c0_di" bpmnElement="Association_1dwp6c0">
+        <di:waypoint x="268" y="232" />
+        <di:waypoint x="244" y="132" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0ssu62v_di" bpmnElement="TextAnnotation_0ssu62v">
+        <dc:Bounds x="397" y="83" width="155" height="57" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1p1v0kn_di" bpmnElement="Association_1p1v0kn">
+        <di:waypoint x="487" y="232" />
+        <di:waypoint x="478" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_1mraek7_di" bpmnElement="TextAnnotation_1mraek7">
+        <dc:Bounds x="631" y="82" width="155" height="59" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1a5tlqw_di" bpmnElement="Association_1a5tlqw">
+        <di:waypoint x="717" y="232" />
+        <di:waypoint x="711" y="141" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_081mm1g_di" bpmnElement="TextAnnotation_081mm1g">
+        <dc:Bounds x="867" y="85" width="148" height="82" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0i32dks_di" bpmnElement="Association_0i32dks">
+        <di:waypoint x="941" y="234" />
+        <di:waypoint x="942" y="167" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_02vcmb9_di" bpmnElement="TextAnnotation_02vcmb9">
+        <dc:Bounds x="1091" y="97" width="138" height="76" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0smshju_di" bpmnElement="Association_0smshju">
+        <di:waypoint x="1133" y="234" />
+        <di:waypoint x="1150" y="173" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
